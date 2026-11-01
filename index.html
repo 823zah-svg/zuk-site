@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ZIK мебель</title>
+<style>
+:root { --y:#ffd60a; --bg:#07070a; }
+• { box-sizing:border-box; margin:0; padding:0; }
+body {
+font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+background: var(--bg); color:#fff; min-height:100vh; overflow-x:hidden;
+}
+a { color:inherit; }
+
+/* фон */
+.bg { position:fixed; top:0; right:0; bottom:0; left:0; z-index:-1; overflow:hidden; pointer-events:none; }
+.blob { position:absolute; border-radius:50%; filter:blur(90px); opacity:.55; animation:float 18s ease-in-out infinite; }
+.b1 { width:420px; height:420px; background:var(--y); top:-100px; left:-80px; opacity:.45; }
+.b2 { width:380px; height:380px; background:#fff; bottom:-120px; right:-60px; opacity:.22; animation-delay:-6s; }
+.b3 { width:300px; height:300px; background:#8a7000; top:45%; left:55%; animation-delay:-11s; }
+@keyframes float { 50% { transform:translate(60px,-50px) scale(1.12); } }
+
+/* жидкое стекло */
+.glass {
+background: linear-gradient(135deg, rgba(255,255,255,.18), rgba(255,255,255,.04));
+backdrop-filter: blur(22px) saturate(180%);
+-webkit-backdrop-filter: blur(22px) saturate(180%);
+border:1px solid rgba(255,255,255,.22);
+box-shadow: inset 0 1px 1px rgba(255,255,255,.45), inset 0 -1px 1px rgba(255,255,255,.08), 0 10px 40px rgba(0,0,0,.45);
+border-radius:28px;
+}
+
+/* переключатели вкладок (работают без JS) */
+.tab { display:none; }
+
+nav {
+position:fixed; top:16px; left:50%; transform:translateX(-50%);
+display:flex; gap:4px; padding:6px; z-index:20; border-radius:999px; white-space:nowrap;
+}
+nav label {
+color:#fff; font-size:14px; font-weight:600; padding:10px 16px; border-radius:999px;
+cursor:pointer; transition:.25s; user-select:none;
+}
+nav label:hover { background:rgba(255,255,255,.14); }
+#t-home:checked ~ nav .n-home,
+#t-works:checked ~ nav .n-works,
+#t-contacts:checked ~ nav .n-contacts {
+background:var(--y); color:#000; box-shadow:0 0 18px rgba(255,214,10,.5);
+}
+
+/* стрелки по бокам (компьютер) */
+.arrow {
+position:fixed; top:50%; margin-top:-27px; z-index:20;
+width:54px; height:54px; border-radius:50%; cursor:pointer;
+color:#fff; font-size:28px; line-height:1; display:none; align-items:center; justify-content:center;
+transition:.25s; user-select:none;
+}
+.arrow:hover { background:var(--y); color:#000; }
+.arrow.prev { left:18px; }
+.arrow.next { right:18px; }
+#t-home:checked ~ .next.to-works,
+#t-works:checked ~ .prev.to-home,
+#t-works:checked ~ .next.to-contacts,
+#t-contacts:checked ~ .prev.to-works { display:flex; }
+@media (max-width:800px) { .arrow, #t-home:checked ~ .next.to-works, #t-works:checked ~ .prev.to-home, #t-works:checked ~ .next.to-contacts, #t-contacts:checked ~ .prev.to-works { display:none; } }
+
+/* страницы */
+.page { display:none; min-height:100vh; padding:100px 20px 50px; }
+#t-home:checked ~ main #home,
+#t-contacts:checked ~ main #contacts { display:flex; align-items:center; justify-content:center; animation:fade .5s; }
+#t-works:checked ~ main #works { display:block; animation:fade .5s; }
+@keyframes fade { from { opacity:0; transform:translateY(12px); } }
+
+.hero { max-width:760px; width:100%; padding:56px 34px; text-align:center; }
+.logo { font-size:clamp(56px,14vw,120px); font-weight:900; color:var(--y); letter-spacing:4px; line-height:1; text-shadow:0 0 40px rgba(255,214,10,.45); }
+.logo span { display:block; font-size:.32em; letter-spacing:12px; color:#fff; font-weight:300; margin-top:10px; text-shadow:none; }
+.sub { margin-top:28px; font-size:clamp(17px,3.6vw,22px); line-height:1.6; color:rgba(255,255,255,.88); }
+.sub b { color:var(--y); }
+.points { list-style:none; margin:26px auto 0; display:grid; gap:10px; text-align:left; max-width:460px; }
+.points li { display:flex; align-items:center; gap:14px; padding:12px 18px; border-radius:18px; background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.2); font-size:clamp(16px,3.4vw,19px); }
+.points i { flex:none; width:32px; height:32px; border-radius:50%; background:var(--y); color:#000; font-style:normal; font-weight:800; display:flex; align-items:center; justify-content:center; }
+.tags { margin-top:30px; display:flex; flex-wrap:wrap; gap:10px; justify-content:center; }
+.tag { padding:9px 18px; border-radius:999px; font-size:14px; background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.2); }
+.btns { margin-top:30px; display:flex; flex-wrap:wrap; gap:12px; justify-content:center; }
+.cta {
+display:inline-block; padding:14px 28px; border-radius:999px;
+background:var(--y); color:#000; font-weight:700; font-size:16px; cursor:pointer;
+transition:.25s; box-shadow:0 0 24px rgba(255,214,10,.4); text-decoration:none; user-select:none;
+}
+.cta:hover { transform:translateY(-3px) scale(1.03); }
+.cta.ghost { background:rgba(255,255,255,.12); color:#fff; border:1px solid rgba(255,255,255,.3); box-shadow:none; }
+
+h2 { text-align:center; font-size:clamp(28px,6vw,44px); margin-bottom:30px; }
+h2 span { color:var(--y); }
+
+/* работы */
+.grid { max-width:1100px; margin:0 auto; display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:20px; }
+.card { display:block; overflow:hidden; border-radius:24px; transition:.3s; cursor:pointer; text-decoration:none; }
+.card:hover { transform:translateY(-6px); border-color:var(--y); }
+.card img { width:100%; height:300px; object-fit:cover; display:block; background:rgba(255,255,255,.06); }
+.card p { padding:14px 18px; font-size:15px; color:rgba(255,255,255,.9); }
+.card p::before { content:"📍 "; }
+
+/* контакты */
+#contacts .hero { max-width:820px; }
+.phone { display:block; margin-top:22px; font-size:clamp(28px,7vw,44px); font-weight:800; color:var(--y); text-decoration:none; text-shadow:0 0 30px rgba(255,214,10,.4); }
+.hint { margin-top:12px; color:rgba(255,255,255,.7); font-size:15px; }
+.addr { margin-top:26px; font-size:clamp(17px,3.6vw,21px); }
+.addr::before { content:"📍 "; }
+.map { margin-top:18px; border-radius:22px; overflow:hidden; border:1px solid rgba(255,255,255,.22); height:320px; background:rgba(255,255,255,.06); }
+.map iframe { width:100%; height:100%; border:0; display:block; }
+
+/* просмотр фото */
+#lb { position:fixed; top:0; right:0; bottom:0; left:0; background:rgba(0,0,0,.85); display:none; align-items:center; justify-content:center; z-index:50; padding:20px; cursor:pointer; }
+#lb.open { display:flex; }
+#lb img { max-width:100%; max-height:90vh; border-radius:20px; border:1px solid rgba(255,255,255,.25); }
+</style>
+</head>
+<body>
+
+<div class="bg"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
+
+<input class="tab" type="radio" name="tab" id="t-home" checked>
+<input class="tab" type="radio" name="tab" id="t-works">
+<input class="tab" type="radio" name="tab" id="t-contacts">
+
+<nav class="glass">
+<label class="n-home" for="t-home">Главная</label>
+<label class="n-works" for="t-works">Наши работы</label>
+<label class="n-contacts" for="t-contacts">Контакты</label>
+</nav>
+
+<label class="arrow prev to-home glass" for="t-home">‹</label>
+<label class="arrow prev to-works glass" for="t-works">‹</label>
+<label class="arrow next to-works glass" for="t-works">›</label>
+<label class="arrow next to-contacts glass" for="t-contacts">›</label>
+
+<main>
+<section id="home" class="page">
+<div class="hero glass">
+<div class="logo">ЗИК<span>МЕБЕЛЬ</span></div>
+<p class="sub">Работаем в <b>Курске</b> и в <b>Москве</b>.<br>На рынке <b>более 20 лет</b>.</p>
+<ol class="points">
+<li><i>1</i>Работа в рамках вашего бюджета</li>
+<li><i>2</i>Спокойные нервы</li>
+<li><i>3</i>Продуманная планировка</li>
+</ol>
+<div class="tags">
+<div class="tag">Курск</div>
+<div class="tag">Москва</div>
+<div class="tag">Более 20 лет</div>
+</div>
+<div class="btns">
+<label class="cta" for="t-works">Смотреть наши работы</label>
+<label class="cta ghost" for="t-contacts">Связаться с нами</label>
+</div>
+</div>
+</section>
+
+<section id="works" class="page">
+<h2>Наши <span>работы</span></h2>
+<div class="grid">
+<a class="card glass" href="https://i.ibb.co/23JtJB2s/IMG-20261031-224408-066.jpg" target="_blank"><img src="https://i.ibb.co/23JtJB2s/IMG-20261031-224408-066.jpg" loading="lazy" alt="Работа 1"><p>Орёл</p></a>
+<a class="card glass" href="https://i.ibb.co/nqYdt4j6/IMG-20261031-224403-441.jpg" target="_blank"><img src="https://i.ibb.co/nqYdt4j6/IMG-20261031-224403-441.jpg" loading="lazy" alt="Работа 2"><p>Тула</p></a>
+<a class="card glass" href="https://i.ibb.co/hRcvgcdn/IMG-20261031-224351-101.jpg" target="_blank"><img src="https://i.ibb.co/hRcvgcdn/IMG-20261031-224351-101.jpg" loading="lazy" alt="Работа 3"><p>Москва</p></a>
+<a class="card glass" href="https://i.ibb.co/LXfz4gXp/IMG-20261031-224323-208.jpg" target="_blank"><img src="https://i.ibb.co/LXfz4gXp/IMG-20261031-224323-208.jpg" loading="lazy" alt="Работа 4"><p>Курск</p></a>
+<a class="card glass" href="https://i.ibb.co/x8HMxZ6M/IMG-20261031-224235-966.jpg" target="_blank"><img src="https://i.ibb.co/x8HMxZ6M/IMG-20261031-224235-966.jpg" loading="lazy" alt="Работа 5"><p>Курск</p></a>
+<a class="card glass" href="https://i.ibb.co/G4rN8fjN/IMG-20261031-224240-150.jpg" target="_blank"><img src="https://i.ibb.co/G4rN8fjN/IMG-20261031-224240-150.jpg" loading="lazy" alt="Работа 6"><p>Москва</p></a>
+<a class="card glass" href="https://i.ibb.co/pCbKmLq/IMG-20261031-224251-387.jpg" target="_blank"><img src="https://i.ibb.co/pCbKmLq/IMG-20261031-224251-387.jpg" loading="lazy" alt="Работа 7"><p>Тула</p></a>
+<a class="card glass" href="https://i.ibb.co/3m7mJmW7/IMG-20261031-224316-330.jpg" target="_blank"><img src="https://i.ibb.co/3m7mJmW7/IMG-20261031-224316-330.jpg" loading="lazy" alt="Работа 8"><p>Орёл</p></a>
+<a class="card glass" href="https://i.ibb.co/mCvkfPT1/IMG-20261031-224313-679.jpg" target="_blank"><img src="https://i.ibb.co/mCvkfPT1/IMG-20261031-224313-679.jpg" loading="lazy" alt="Работа 9"><p>Курск</p></a>
+<a class="card glass" href="https://i.ibb.co/bRDSpkkS/IMG-20261031-224257-898.jpg" target="_blank"><img src="https://i.ibb.co/bRDSpkkS/IMG-20261031-224257-898.jpg" loading="lazy" alt="Работа 10"><p>Москва</p></a>
+<a class="card glass" href="https://i.ibb.co/C3zczghf/IMG-20261031-224337-232.jpg" target="_blank"><img src="https://i.ibb.co/C3zczghf/IMG-20261031-224337-232.jpg" loading="lazy" alt="Работа 11"><p>Орёл</p></a>
+<a class="card glass" href="https://i.ibb.co/Xkkk3gnZ/IMG-20261031-224333-907.jpg" target="_blank"><img src="https://i.ibb.co/Xkkk3gnZ/IMG-20261031-224333-907.jpg" loading="lazy" alt="Работа 12"><p>Тула</p></a>
+<a class="card glass" href="https://i.ibb.co/PG6z0NMR/IMG-20261031-224400-065.jpg" target="_blank"><img src="https://i.ibb.co/PG6z0NMR/IMG-20261031-224400-065.jpg" loading="lazy" alt="Работа 13"><p>Курск</p></a>
+<a class="card glass" href="https://i.ibb.co/Ndmkr9pC/IMG-20261031-224328-021.jpg" target="_blank"><img src="https://i.ibb.co/Ndmkr9pC/IMG-20261031-224328-021.jpg" loading="lazy" alt="Работа 14"><p>Москва</p></a>
+</div>
+</section>
+
+<section id="contacts" class="page">
+<div class="hero glass">
+<h2 style="margin-bottom:0">Наши <span>контакты</span></h2>
+<a class="phone" href="tel:+79050421499">+7 905 042-14-99</a>
+<p class="hint">Звоните — подберём мебель на ваш вкус</p>
+
+<div class="btns">
+<a class="cta" href="tel:+79050421499">📞 Позвонить</a>
+<a class="cta ghost" href="https://vk.ru/mebelnazakazkurskzik" target="_blank" rel="noopener">ВКонтакте</a>
+</div>
+
+<p class="addr">г. Курск, Энгельса 169</p>
+<div class="map">
+<iframe src="https://yandex.ru/map-widget/v1/org/zik_mebel/239119527994/" allowfullscreen loading="lazy" title="ZIK мебель на карте"></iframe>
+</div>
+<div class="btns">
+<a class="cta ghost" href="https://yandex.ru/maps/org/zik_mebel/239119527994/" target="_blank" rel="noopener">Открыть в Яндекс Картах</a>
+</div>
+</div>
+</section>
+</main>
+
+<div id="lb"><img alt=""></div>
+
+<script>
+/* Сайт работает и без этого скрипта. Он только добавляет: клавиши ← →, свайп и увеличение фото. */
+(function () {
+var tabs = ["home", "works", "contacts"];
+var lb = document.getElementById("lb");
+
+function radio(n) { return document.getElementById("t-" + n); }
+function cur() { for (var i = 0; i < tabs.length; i++) if (radio(tabs[i]).checked) return i; return 0; }
+function go(d) {
+var i = cur() + d;
+if (i >= 0 && i < tabs.length) { radio(tabs[i]).checked = true; window.scrollTo(0, 0); }
+}
+
+tabs.forEach(function (n) {
+radio(n).addEventListener("change", function () { window.scrollTo(0, 0); });
+});
+
+/* увеличение фото */
+Array.prototype.forEach.call(document.querySelectorAll(".card"), function (c) {
+c.addEventListener("click", function (e) {
+e.preventDefault();
+lb.querySelector("img").src = c.getAttribute("href");
+lb.className = "open";
+});
+});
+lb.addEventListener("click", function () { lb.className = ""; });
+
+/* клавиатура */
+document.addEventListener("keydown", function (e) {
+if (lb.className === "open") { if (e.key === "Escape") lb.className = ""; return; }
+if (e.key === "ArrowRight") go(1);
+if (e.key === "ArrowLeft") go(-1);
+});
+
+/* свайп на телефоне */
+var sx = 0, sy = 0;
+document.addEventListener("touchstart", function (e) { sx = e.touches[0].clientX; sy = e.touches[0].clientY; }, { passive: true });
+document.addEventListener("touchend", function (e) {
+if (lb.className === "open") return;
+var dx = e.changedTouches[0].clientX - sx, dy = e.changedTouches[0].clientY - sy;
+if (Math.abs(dx) > 70 && Math.abs(dx) > Math.abs(dy) * 1.5) go(dx < 0 ? 1 : -1);
+}, { passive: true });
+})();
+</script>
+</body>
+</html>
